@@ -1,0 +1,7 @@
+parameters:
+
+
+database:
+	dsn: 'mysql:host=mysql;port=3306;dbname=nette'
+	user: root
+	password: root

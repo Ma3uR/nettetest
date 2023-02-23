@@ -1,0 +1,59 @@
+{block content}
+<h1>Profile list page</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Username</th>
+        <th scope="col">Age</th>
+        <th scope="col">Gender</th>
+        <th scope="col">Gender Search</th>
+        <th scope="col">Country</th>
+        <th scope="col">City</th>
+    </tr>
+    </thead>
+    <tbody>
+        {foreach $users as $user}
+            <tr>
+                <td>{$user->username}</td>
+                <td>{$user->age}</td>
+                <td>
+                    {if $user->gender == 1}
+                        Male
+                    {else}
+                        Female
+                    {/if}
+                </td>
+                <td>
+                    {if $user->gender_search == 1}
+                        Male
+                    {else}
+                        Female
+                    {/if}
+                </td>
+                <td>{$user->country}</td>
+                <td>{$user->city}</td>
+            </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+<p>(<a n:href="Profile:show">Back to profile</a>)</p>
+
+<div class="pagination">
+    {if !$paginator->isFirst()}
+        <a n:href="Profile:list, 1">First</a>
+        &nbsp;|&nbsp;
+        <a n:href="Profile:list, $paginator->page-1">Previous</a>
+        &nbsp;|&nbsp;
+    {/if}
+
+        Page {$paginator->getPage()} of {$paginator->getPageCount()}
+
+	{if !$paginator->isLast()}
+        &nbsp;|&nbsp;
+        <a n:href="Profile:list, $paginator->getPage() + 1">Next</a>
+        &nbsp;|&nbsp;
+        <a n:href="Profile:list, $paginator->getPageCount()">Last</a>
+    {/if}
+</div>

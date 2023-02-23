@@ -1,0 +1,88 @@
+{block content}
+<h1>Profile page</h1>
+
+<div class="col-lg-8">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Username</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">{$user->username}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Email</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">{$user->email}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Age</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">{$user->age}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Gender</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">
+                        {if $user->gender == 1}
+                            Male
+                        {else}
+                            Female
+                        {/if}
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Gender search</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">
+                        {if $user->gender_search == 1}
+                            Male
+                        {else}
+                            Female
+                        {/if}
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Profile info</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">{$user->profile_text}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="mb-0">Country\City</p>
+                </div>
+                <div class="col-sm-9">
+                    <p class="text-muted mb-0">{$user->country} {$user->city}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<br>
+<hr>
+<p>(<a n:href="Profile:list">Profile list page</a>)</p> <p>(<a n:href="Sign:out">Sign out</a>)</p>
+
+

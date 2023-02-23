@@ -1,0 +1,43 @@
+{block content}
+<h1 n:block=title>Sign Up | Final step | Country City</h1>
+
+{include "../@form.latte", name: finalStepForm}
+
+{*<script src="{$basePath}/assets/js/city-select.js"></script>*}
+<script>
+    document.querySelectorAll('select[data-depends]').forEach((childSelect) => {
+        let parentSelect = childSelect.form[childSelect.dataset.depends]; // parent <select>
+        let url = childSelect.dataset.url; // attribute data-url
+        let items = JSON.parse(childSelect.dataset.items || 'null'); // attribute data-items
+
+        // when the user changes the selected item in the parent selection...
+        parentSelect.addEventListener('change', () => {
+            // if the data-items attribute exists...
+            if (items) {
+                // load new items directly into the child selectbox
+                updateSelectbox(childSelect, items[parentSelect.value]);
+            }
+
+            // if the data-url attribute exists...
+            if (url) {
+                // we make AJAX request to the endpoint with the selected item instead of placeholder
+                fetch(url.replace(encodeURIComponent('#'), encodeURIComponent(parentSelect.value)))
+                    .then((response) => response.json())
+                    // and load new items into the child selectbox
+                    .then((data) => updateSelectbox(childSelect, data));
+            }
+        });
+    });
+
+    // replaces <options> in <select>
+    function updateSelectbox(select, items)
+    {
+        select.innerHTML = ''; // remove all
+        for (let id in items) { // insert new
+            let el = document.createElement('option');
+            el.setAttribute('value', id);
+            el.innerText = items[id];
+            select.appendChild(el);
+        }
+    }
+</script>

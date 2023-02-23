@@ -1,0 +1,13 @@
+/.env
+mysql/db/*
+!mysql/dumps/.gitignore
+mysql/config/*
+!mysql/config/.gitignore
+nginx/*/certs/*
+!nginx/*/certs/.gitignore
+nginx/*/config/*
+!nginx/*/config/.gitignore
+nginx/*/logs/*
+!nginx/*/logs/.gitignore
+php/dev/config/*
+!php/dev/config/70-config.ini

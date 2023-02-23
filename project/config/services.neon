@@ -1,0 +1,12 @@
+services:
+	- App\Model\UserFacade
+	- App\Model\CountryFacade
+	- App\Model\CityFacade
+	- App\Forms\FormFactory
+	- App\Forms\SignInFormFactory
+	- App\Forms\FirstStepFormFactory
+	- App\Forms\SecondStepFormFactory
+	- App\Forms\FinalStepFormFactory
+	- App\Repository\UserRepository
+	- App\Service\UserService
+	- App\Router\RouterFactory::createRouter

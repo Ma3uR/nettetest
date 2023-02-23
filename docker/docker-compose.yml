@@ -1,0 +1,101 @@
+version: '3'
+
+networks:
+  default:
+    driver: bridge
+
+services:
+  app:
+    container_name: ${APPLICATION_NAME}-app
+    build:
+      context: .
+      dockerfile: ./php/${APPLICATION_ENV}/Dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - APPLICATION_USER_ID=${APPLICATION_USER_ID}
+        - APPLICATION_USER_GROUP=${APPLICATION_USER_GROUP}
+        - COMPOSER_VERSION=${COMPOSER_VERSION}
+    volumes:
+      - ${APPLICATION_PATH}:/var/www/${APPLICATION_NAME}/
+      - ${COMPOSER_CACHE_PATH}:/var/www/.composer
+    user: ${APPLICATION_USER_ID}:${APPLICATION_USER_GROUP}
+    working_dir: /var/www/${APPLICATION_NAME}/
+    networks:
+      - default
+    environment:
+      COMPOSER_HOME: /var/www/.composer
+      PHP_IDE_CONFIG: serverName=localhost
+
+  nginx:
+    container_name: ${APPLICATION_NAME}-nginx
+    build:
+      context: .
+      dockerfile: ./nginx/${APPLICATION_ENV}/Dockerfile
+    ports:
+      - ${APPLICATION_HTTP_PORT}:80
+      - ${APPLICATION_HTTPS_PORT}:443
+    volumes:
+     - ${APPLICATION_PATH}:/var/www/${APPLICATION_NAME}/
+     - ./nginx/${APPLICATION_ENV}/host.conf:/etc/nginx/conf.d/default.conf.dist
+     - ./nginx/${APPLICATION_ENV}/config/:/etc/nginx/conf.d/config/
+     - ./nginx/${APPLICATION_ENV}/certs/:/etc/nginx/conf.d/certs/
+     - ./nginx/${APPLICATION_ENV}/logs/:/var/log/nginx/
+    depends_on:
+      - app
+    networks:
+      - default
+    environment:
+      - APPLICATION_DOMAIN=${APPLICATION_DOMAIN}
+      - APPLICATION_NAME=${APPLICATION_NAME}
+    command: /bin/bash -c "envsubst '$$APPLICATION_DOMAIN,$$APPLICATION_NAME' < /etc/nginx/conf.d/default.conf.dist > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
+  mysql:
+    container_name: ${APPLICATION_NAME}-mysql
+    build:
+      context: .
+      dockerfile: ./mysql/Dockerfile
+      args:
+        - MYSQL_VERSION=${MYSQL_VERSION}
+        - APPLICATION_USER_ID=${APPLICATION_USER_ID}
+        - APPLICATION_USER_GROUP=${APPLICATION_USER_GROUP}
+    volumes:
+     - ./mysql/mysql.conf:/etc/mysql/conf.d/mysql.cnf
+     - ./mysql/config/:/etc/mysql/mysql.conf.cutom/
+     - ./mysql/db/:/var/lib/mysql
+     - ./mysql/dumps/:/docker-entrypoint-initdb.d/
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    user: ${APPLICATION_USER_ID}:${APPLICATION_USER_GROUP}
+    networks:
+      - default
+
+  phpmyadmin:
+    container_name: ${APPLICATION_NAME}-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - ${MYSQL_ADMIN_PORT}:80
+    links:
+      - mysql:db
+    depends_on:
+      - mysql
+    environment:
+      PMA_ABSOLUTE_URI: ${MYSQL_ADMIN_DOMAIN}
+    networks:
+      - default
+
+#  node:
+#    container_name: ${APPLICATION_NAME}-node
+#    build:
+#      context: .
+#      dockerfile: ./node/Dockerfile
+#      args:
+#        - NODE_VERSION=${NODE_VERSION}
+#        - APPLICATION_USER_ID=${APPLICATION_USER_ID}
+#        - APPLICATION_USER_GROUP=${APPLICATION_USER_GROUP}
+#    volumes:
+#      - ${APPLICATION_PATH}:/home/node/app
+#    user: ${APPLICATION_USER_ID}:${APPLICATION_USER_GROUP}
+#    working_dir: /home/node/app
+#    networks:
+#      - default
+#    command: "npm install"
